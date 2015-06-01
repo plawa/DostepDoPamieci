@@ -36,27 +36,24 @@ double stopCzas(clock_t *startTime){
 }
 
 //*** ZMIENNE GLOBALNE ***
-unsigned int odstep = 1;														//odstêp - wielkoœæ skoku pomiêdzy komórkami danych
-const unsigned int rozmiarAlokMega =  480;										//rozmiar zajmowanego przez program miejsca w pamiêci w MB
-
-//------------------------------------------
 const unsigned char rozmiarChara = sizeof(char);
+const unsigned int rozmiarAlokMega =  480;										//rozmiar w MB (max 1850)
 const unsigned int rozmiarAlokByte = rozmiarAlokMega * 1048576 / rozmiarChara;	//konwersja z MB na B
 unsigned char tablica[rozmiarAlokByte];											//rezerwacja pamiêci dla programu
-unsigned char tablica2[rozmiarAlokByte];											//rezerwacja pamiêci dla programu - druga tablica
-unsigned char tablica3[rozmiarAlokByte];
+
+const int iloscElemDoOdczytu = 480000000;										//dla techniki preparowania sekwencji
 FILE *plik;
 
 //*** MAIN ***
 int main(){
 	srand((size_t)time(NULL));							//reset generatora liczb pseudolosowych
-	unsigned int timer, wybor;
+	unsigned int timer, wybor, odstep = 1;					//zmienna przechowuj¹ca obliczon¹ iloœæ cykli CPU
 	double zmierzonyCzas;
 	clock_t *czasStartu = new clock_t;
 
 	printf("Trwa inicjalizacja %d MB pamieci losowymi wartosciami (char = %d bajt)...\n", rozmiarAlokMega, rozmiarChara);
 	for (int i = 0; i < rozmiarAlokByte; i++)
-		tablica3[i] = tablica2[i] = tablica[i] = rand() % 256;						//zape³nianie tablicy losowymi wartoœciami z przedzia³u [0-255]
+		tablica[i] = rand() % 256;						//zape³nianie tablicy losowymi wartoœciami z przedzia³u [0-255]
 	
 	printf("Wybierz technike pomiaru:\n1. Preparowanie sekwencji (pomiar masowy)\n2. Pomiar czasu pojedynczej instrukcji\n\nPodaj wybor: ");
 	scanf_s("%d", &wybor);
@@ -68,14 +65,13 @@ while (true){
 		printf("Podaj odstep miedzy komorkami: ");
 		scanf_s("%d", &skok);
 		startCzas(czasStartu);
-		for (unsigned int i = 0; i < rozmiarAlokByte; i+= skok){
+		for (int i = 0; i < iloscElemDoOdczytu; i+= skok){
 			IterToEDI();
 			Odczytaj(tablica);
-			Odczytaj(tablica2);
 		}
 		zmierzonyCzas = stopCzas(czasStartu);
-		printf("Czas odczytu %d elementow z pamieci wynosi: %.3f [s]\n", 2*rozmiarAlokByte/skok, zmierzonyCzas);
-		printf("Sredni czas odczytu dla jednej komorki danych wynosi: %.3f [ns]\n", 1000000000 * zmierzonyCzas/(2*rozmiarAlokByte/skok));
+		printf("Czas odczytu %d elementow z pamieci wynosi: %.3f [s]\n", iloscElemDoOdczytu/skok, zmierzonyCzas);
+		printf("Sredni czas odczytu dla jednej komorki danych wynosi: %.3f [ns]\n", 1000000000 * zmierzonyCzas/(iloscElemDoOdczytu/skok));
 		break;
 
 	case 2:
