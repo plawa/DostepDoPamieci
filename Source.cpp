@@ -35,11 +35,11 @@ double stopCzas(clock_t *startTime){
 	return static_cast <double>(clock() - *startTime) / CLOCKS_PER_SEC;
 }
 
-//*** ZMIENNE REGULOWALNE ***
+//*** ZMIENNE MODYFIKOWALNE ***
 unsigned int odstep = 1;														//odstêp - wielkoœæ skoku pomiêdzy komórkami danych
 const unsigned int rozmiarAlokMega = 480;										//rozmiar zajmowanego przez program miejsca w pamiêci w MB
 
-//*** ZMIENNE GLOBALNE NIEREGULOWALNE ***
+//*** ZMIENNE GLOBALNE NIEMODYFIKOWALNE ***
 const unsigned char rozmiarChara = sizeof(char);
 const unsigned int rozmiarAlokByte = rozmiarAlokMega * 1048576 / rozmiarChara;	//konwersja z MB na B
 unsigned char tablica[rozmiarAlokByte];											//rezerwacja pamiêci dla programu
