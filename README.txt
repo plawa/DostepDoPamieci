@@ -12,4 +12,4 @@ Aby uruchomiæ aplikacjê, nale¿y po jej kompilacji otworzyæ plik wykonywalny (*.e
 OBS£UGA
 -----------------
 Ze wzglêdu na udostêpniony kod Ÿród³owy, przed kompilacj¹ mo¿liwa jest edycja dowolnych parametrów maj¹cych wp³yw na przebieg pomiarów. Parametry maj¹ce najwiêkszy wp³yw na wyniki pomiarów to wielkoœæ skoku, oraz rozmiar zajmowanego przez program w pamiêci miejsca. Znajduj¹ siê one przed funkcj¹ main(), w sekcji kodu okreœlonej komentarzem „*** ZMIENNE MODYFIKOWALNE ***”.
-Dok³adne wytyczne co nale¿y zrobiæ aby ponowiæ eksperymenty opisane w sprawozdaniu znajduj¹ siê w dokumencie "Jak wykonaæ eksperyment.pdf".
+Dok³adne wytyczne co nale¿y zrobiæ aby ponowiæ eksperymenty opisane w sprawozdaniu znajduj¹ siê w dokumencie "Instrukcje pomiarów.pdf".
