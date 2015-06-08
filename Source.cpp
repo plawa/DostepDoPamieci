@@ -36,13 +36,15 @@ double stopCzas(clock_t *startTime){
 }
 
 //*** ZMIENNE MODYFIKOWALNE ***
-unsigned int odstep = 1;														//odstêp - wielkoœæ skoku pomiêdzy komórkami danych
+unsigned int odstep = 1024;														//odstêp - wielkoœæ skoku pomiêdzy komórkami danych
+const unsigned int limitElementow = 2050;
 const unsigned int rozmiarAlokMega = 480;										//rozmiar zajmowanego przez program miejsca w pamiêci w MB
 
 //*** ZMIENNE GLOBALNE NIEMODYFIKOWALNE ***
 const unsigned char rozmiarChara = sizeof(char);
 const unsigned int rozmiarAlokByte = rozmiarAlokMega * 1048576 / rozmiarChara;	//konwersja z MB na B
 unsigned char tablica[rozmiarAlokByte];											//rezerwacja pamiêci dla programu
+unsigned char czyszczenie[rozmiarAlokByte];										//tab, której odczyt bêdzie czysci³ cache
 
 FILE *plik;
 
@@ -53,10 +55,11 @@ int main(){
 	double zmierzonyCzas;
 	clock_t *czasStartu = new clock_t;
 
-	printf("Trwa inicjalizacja %d MB pamieci losowymi wartosciami (char = %d bajt)...\n", rozmiarAlokMega, rozmiarChara);
-	for (int i = 0; i < rozmiarAlokByte; i++)
+	printf("Trwa inicjalizacja 2x%d MB pamieci losowymi wartosciami (char = %d bajt)...\n", rozmiarAlokMega, rozmiarChara);
+	for (int i = 0; i < rozmiarAlokByte; i++){
 		tablica[i] = rand() % 256;						//zape³nianie tablicy losowymi wartoœciami z przedzia³u [0-255]
-
+		czyszczenie[i] = rand() % 256;
+	}
 	printf("Wybierz technike pomiaru:\n1. Preparowanie sekwencji (pomiar masowy)\n2. Pomiar czasu pojedynczej instrukcji\n\nPodaj wybor: ");
 	scanf_s("%d", &wybor);
 
@@ -78,13 +81,21 @@ int main(){
 
 		case 2:
 			system("cls");
+
+
+
 			plik = fopen("wyniki.txt", "w");
 			printf("Odstepy pomiedzy wczytywanymi danymi: %d bajt (%d char).\n", odstep*rozmiarChara, odstep);
 			RDTSCP1();
 			RDTSCP2(timer);
 			printf("Ilosc cykli w przypadku braku instrukcji (nop) = %d\n\n", timer);
+			printf("Czyszczenie cache ciaglym odczytem duzego obszaru pamieci...\n");
+			for (unsigned int i = 0; i < rozmiarAlokByte; i++){
+				IterToEDI();						//wczytanie offsetu "i" do rej. %edi, aby nie mierzyæ kilkukrotnego dostêpu do pamieci
+				Odczytaj(tablica);					//wycztanie chara spod adresu "tablica" + "%edi" do rejestru cl
+			}
 
-			for (unsigned int i = 0; i < 2050; i += odstep) {
+			for (unsigned int i = 0; i < rozmiarAlokByte; i += odstep) {
 				IterToEDI();								//wczytanie offsetu "i" do rej. %edi, aby nie mierzyæ kilkukrotnego dostêpu do pamieci
 				RDTSCP1();									//czas start
 				Odczytaj(tablica);							//wycztanie chara spod adresu "tablica" + "%edi" do rejestru cl
