@@ -36,7 +36,7 @@ double stopCzas(clock_t *startTime){
 }
 
 //*** ZMIENNE MODYFIKOWALNE ***
-unsigned int odstep = 1024;														//odstêp - wielkoœæ skoku pomiêdzy komórkami danych
+unsigned int odstep = 1;														//odstêp - wielkoœæ skoku pomiêdzy komórkami danych
 const unsigned int limitElementow = 2050;
 const unsigned int rozmiarAlokMega = 480;										//rozmiar zajmowanego przez program miejsca w pamiêci w MB
 
@@ -95,7 +95,7 @@ int main(){
 				Odczytaj(tablica);					//wycztanie chara spod adresu "tablica" + "%edi" do rejestru cl
 			}
 
-			for (unsigned int i = 0; i < rozmiarAlokByte; i += odstep) {
+			for (unsigned int i = 0; i < limitElementow; i += odstep) {
 				IterToEDI();								//wczytanie offsetu "i" do rej. %edi, aby nie mierzyæ kilkukrotnego dostêpu do pamieci
 				RDTSCP1();									//czas start
 				Odczytaj(tablica);							//wycztanie chara spod adresu "tablica" + "%edi" do rejestru cl
